@@ -9,12 +9,7 @@ $(PROJ).pdf: lkmpg.tex
 html: lkmpg.tex html.cfg assets/Manrope_variable.ttf $(wildcard examples/*.[ch] examples/other/*.[ch])
 	sed $ 's/\t/    /g' lkmpg.tex > lkmpg-for-ht.tex
 	make4ht --shell-escape --utf8 --format html5 --config html.cfg --output-dir html  lkmpg-for-ht.tex "fn-in"
-	python3 -c "\
-	import re, sys; \
-	f=open('html/lkmpg-for-ht.html','r'); s=f.read(); f.close(); \
-	s=re.sub(r\"(<span class='ecrm-0500'>\d+)([ ]+)</span>\",lambda m:m.group(1)+'</span>'+' '*int(len(m.group(2))*4/7),s); \
-	s=re.sub(r\"(<span class='ecrm-0500'>\d+)\n</span>\",lambda m:m.group(1)+'</span>\n',s); \
-	f=open('html/lkmpg-for-ht.html','w'); f.write(s); f.close()"
+	python3 scripts/postprocess_html.py html/lkmpg-for-ht.html
 	ln -sf lkmpg-for-ht.html html/index.html
 	cp assets/Manrope_variable.ttf html/Manrope_variable.ttf
 	rm -f  lkmpg-for-ht.tex lkmpg-for-ht.xref lkmpg-for-ht.tmp lkmpg-for-ht.html lkmpg-for-ht.css lkmpg-for-ht.4ct lkmpg-for-ht.4tc lkmpg-for-ht.dvi lkmpg-for-ht.lg lkmpg-for-ht.idv lkmpg*.svg lkmpg-for-ht.log lkmpg-for-ht.aux

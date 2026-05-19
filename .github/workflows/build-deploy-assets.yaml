@@ -2,7 +2,9 @@ name: build-deploy-assets
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+      - 'improve-html-**'
 
   workflow_dispatch:
 

@@ -424,10 +424,10 @@ Specifically, path variables are not retained from the user environment;
 they are set to default values (for more information, see: \href{https://www.sudo.ws/docs/man/sudoers.man/}{sudoers manual}).
 You can see the environment variable settings by:
 
-\begin{verbatim}
+\begin{codebash}
 $ sudo -s
 # sudo -V
-\end{verbatim}
+\end{codebash}
 
 Here is a simple Makefile as an example to demonstrate the problem mentioned above.
 
@@ -438,19 +438,19 @@ all:
 
 Then, we can use the \verb|-p| flag to print out the environment variable values from the Makefile.
 
-\begin{verbatim}
+\begin{codebash}
 $ make -p | grep PWD
 PWD = /home/ubuntu/temp
 OLDPWD = /home/ubuntu
 	echo $(PWD)
-\end{verbatim}
+\end{codebash}
 
 The \verb|PWD| variable will not be inherited with \verb|sudo|.
 
-\begin{verbatim}
+\begin{codebash}
 $ sudo make -p | grep PWD
 	echo $(PWD)
-\end{verbatim}
+\end{codebash}
 
 However, there are three ways to solve this problem.
 
@@ -499,10 +499,10 @@ However, there are three ways to solve this problem.
 
   After applying the above change, you can check the environment variable settings by:
 
-  \begin{verbatim}
+  \begin{codebash}
     $ sudo -s
     # sudo -V
-  \end{verbatim}
+  \end{codebash}
   }
 \end{enumerate}
 
@@ -681,11 +681,11 @@ When you boot your kernel and see something like Freeing unused kernel memory: 2
 \label{sec:modlicense}
 Honestly, who loads or even cares about proprietary modules?
 If you do then you might have seen something like this:
-\begin{verbatim}
+\begin{codebash}
 $ sudo insmod xxxxxx.ko
 loading out-of-tree module taints kernel.
 module license 'unspecified' taints kernel.
-\end{verbatim}
+\end{codebash}
 
 You can use a few macros to indicate the license for your module.
 Some examples are "GPL", "GPL v2", "GPL and additional rights", "Dual BSD/GPL", "Dual MIT/GPL", "Dual MPL/GPL" and "Proprietary".
@@ -771,7 +771,7 @@ The full example below also overrides \cpp|.get| so that every sysfs read is log
 \samplec{examples/hello-6.c}
 
 It is recommended to experiment with the following code:
-\begin{verbatim}
+\begin{codebash}
 $ sudo insmod hello-5.ko mystring="bebop" myintarray=-1
 $ sudo dmesg -t | tail -7
 myshort is a short integer: 1
@@ -802,10 +802,10 @@ Goodbye, world 5
 
 $ sudo insmod hello-5.ko mylong=hello
 insmod: ERROR: could not insert module hello-5.ko: Invalid parameters
-\end{verbatim}
+\end{codebash}
 
 % break for proper layout
-\begin{verbatim}
+\begin{codebash}
 $ sudo insmod hello-6.ko watched=7
 $ sudo dmesg -t | tail -3
 watched updated to 7
@@ -823,7 +823,7 @@ $ sudo dmesg -t | tail -1
 watched updated to 21
 
 $ sudo rmmod hello-6
-\end{verbatim}
+\end{codebash}
 
 \subsection{Modules Spanning Multiple Files}
 \label{sec:modfiles}
@@ -881,15 +881,15 @@ If you can't think of a case that will force you to use modules for a precompile
 Now, if you just install a kernel source tree, use it to compile your kernel module and you try to insert your module into the kernel,
 in most cases you would obtain an error as follows:
 
-\begin{verbatim}
+\begin{codebash}
 insmod: ERROR: could not insert module poet.ko: Invalid module format
-\end{verbatim}
+\end{codebash}
 
 Less cryptic information is logged to the systemd journal:
 
-\begin{verbatim}
+\begin{codebash}
 kernel: poet: disagrees about version of symbol module_layout
-\end{verbatim}
+\end{codebash}
 
 In other words, your kernel refuses to accept your module because version strings (more precisely, \textit{version magic}, see \src{include/linux/vermagic.h}) do not match.
 The version magic string encodes the kernel version, the SMP configuration, preemption model, and other build flags that affect the kernel ABI.
@@ -900,7 +900,7 @@ Version magic strings are stored in the module object in the form of a static st
 Version data are inserted in your module when it is linked against the \verb|kernel/module.o| file.
 To inspect version magics and other strings stored in a given module, issue the command \sh|modinfo module.ko|:
 
-\begin{verbatim}
+\begin{codebash}
 $ modinfo hello-4.ko
 description:    A sample driver
 author:         LKMPG
@@ -910,7 +910,7 @@ depends:
 retpoline:      Y
 name:           hello_4
 vermagic:       5.4.0-70-generic SMP mod_unload modversions
-\end{verbatim}
+\end{codebash}
 
 To overcome this problem we could resort to the \verb|--force-vermagic| option, but this solution is potentially unsafe, and unquestionably unacceptable in production modules.
 Consequently, we want to compile our module in an environment which was identical to the one in which our precompiled kernel was built.
@@ -926,12 +926,12 @@ That slight difference, namely the custom string which appears in the module's v
 Then, examine your \verb|Makefile|, and make sure that the specified version information matches exactly the one used for your current kernel.
 For example, your makefile could start as follows:
 
-\begin{verbatim}
+\begin{codebash}
 VERSION = 5
 PATCHLEVEL = 14
 SUBLEVEL = 0
 EXTRAVERSION = -rc2
-\end{verbatim}
+\end{codebash}
 
 In this case, you need to restore the value of symbol \textbf{EXTRAVERSION} to \textbf{-rc2}.
 We suggest keeping a backup copy of the makefile used to compile your kernel available in \verb|/lib/modules/5.14.0-rc2/build|.
@@ -943,7 +943,7 @@ Here \sh|linux-`uname -r`| is the Linux kernel source you are attempting to buil
 
 Now, please run \sh|make| to update configuration and version headers and objects:
 
-\begin{verbatim}
+\begin{codebash}
 $ make
   SYNC    include/config/auto.conf.cmd
   HOSTCC  scripts/basic/fixdep
@@ -958,7 +958,7 @@ $ make
   HOSTCC  scripts/kconfig/lexer.lex.o
   HOSTCC  scripts/kconfig/parser.tab.o
   HOSTLD  scripts/kconfig/conf
-\end{verbatim}
+\end{codebash}
 
 If you do not desire to actually compile the kernel, you can interrupt the build process (CTRL-C) just after the SPLIT line, because at that time, the files you need are ready.
 Now you can turn back to the directory of your module and compile it: It will be built exactly according to your current kernel settings, and it will load into it without any errors.
@@ -1189,12 +1189,12 @@ A userspace program like mp3blaster can use \verb|/dev/sound| without ever knowi
 Let's look at some device files.
 Here are device files which represent the first three partitions on the primary SCSI storage devices:
 
-\begin{verbatim}
+\begin{codebash}
 $ ls -l /dev/sda[1-3]
 brw-rw----  1 root  disk  8, 1 Apr  9  2025 /dev/sda1
 brw-rw----  1 root  disk  8, 2 Apr  9  2025 /dev/sda2
 brw-rw----  1 root  disk  8, 3 Apr  9  2025 /dev/sda3
-\end{verbatim}
+\end{codebash}
 
 Notice the column of numbers separated by a comma.
 The first number is called the device's major number.
@@ -1215,12 +1215,12 @@ You can tell whether a device file is for a block device or a character device b
 If it is `b' then it is a block device, and if it is `c' then it is a character device.
 The devices you see above are block devices. Here are some character devices (the serial ports):
 
-\begin{verbatim}
+\begin{codebash}
 crw-rw----  1 root  dial 4, 64 Feb 18 23:34 /dev/ttyS0
 crw-r-----  1 root  dial 4, 65 Nov 17 10:26 /dev/ttyS1
 crw-rw----  1 root  dial 4, 66 Jul  5  2000 /dev/ttyS2
 crw-rw----  1 root  dial 4, 67 Jul  5  2000 /dev/ttyS3
-\end{verbatim}
+\end{codebash}
 
 If you want to see which major numbers have been assigned, you can look at \src{Documentation/admin-guide/devices.txt}.
 
@@ -1240,11 +1240,11 @@ It is important to note that when referring to \emph{``hardware''},
 the term is used in a slightly more abstract sense than just a physical PCI card that can be held in hand.
 Consider the following two device files:
 
-\begin{verbatim}
+\begin{codebash}
 $ ls -l /dev/sda /dev/sdb
 brw-rw---- 1 root disk 8,  0 Jan  3 09:02 /dev/sda
 brw-rw---- 1 root disk 8, 16 Jan  3 09:02 /dev/sdb
-\end{verbatim}
+\end{codebash}
 
 By now you can look at these two device files and know instantly that they are block devices and are handled by same driver (block major 8).
 Sometimes two device files with the same major but different minor number can actually represent the same piece of physical hardware.
@@ -1531,10 +1531,10 @@ The offset is the current position in the file.
 If the return value of the function is not null, then this function is called again.
 So be careful with this function, if it never returns zero, the read function is called endlessly.
 
-\begin{verbatim}
+\begin{codebash}
 $ cat /proc/helloworld
 HelloWorld!
-\end{verbatim}
+\end{codebash}
 
 \samplec{examples/procfs1.c}
 
@@ -1970,7 +1970,7 @@ and some configurations of GCC, like GCC versions 9 and 10 in Ubuntu Linux,
 will add with CET (the \verb|-fcf-protection| option) in the kernel by default.
 Using that GCC to compile the kernel with retpoline off may result in CET being enabled in the kernel.
 You can use the following command to check out the \verb|-fcf-protection| option is enabled or not:
-\begin{verbatim}
+\begin{codebash}
 $ gcc -v -Q -O2 --help=target | grep protection
 Using built-in specs.
 COLLECT_GCC=gcc
@@ -1981,7 +1981,7 @@ COLLECT_GCC_OPTIONS='-v' '-Q' '-O2' '--help=target' '-mtune=generic' '-march=x86
  /usr/lib/gcc/x86_64-linux-gnu/9/cc1 -v ... -fcf-protection ...
  GNU C17 (Ubuntu 9.3.0-17ubuntu1~20.04) version 9.3.0 (x86_64-linux-gnu)
 ...
-\end{verbatim}
+\end{codebash}
 But CET should not be enabled in the kernel, it may break the Kprobes and bpf.
 Consequently, CET is disabled since v5.11.
 To guarantee the manual symbol lookup worked, we only use up to v5.4.
@@ -1996,13 +1996,13 @@ Within the symbol name, the address will be handled by the kernel.
 
 Otherwise, specify the address of \cpp|sys_call_table| from \verb|/proc/kallsyms| and \verb|/boot/System.map| into \cpp|sym| parameter.
 Following is the sample usage for \verb|/proc/kallsyms|:
-\begin{verbatim}
+\begin{codebash}
 $ sudo grep sys_call_table /proc/kallsyms
 ffffffff82000280 R x32_sys_call_table
 ffffffff820013a0 R sys_call_table
 ffffffff820023e0 R ia32_sys_call_table
 $ sudo insmod syscall-steal.ko sym=0xffffffff820013a0
-\end{verbatim}
+\end{codebash}
 
 Using the address from \verb|/boot/System.map|, be careful about \verb|KASLR| (Kernel Address Space Layout Randomization).
 \verb|KASLR| may randomize the address of kernel code and data at every boot time, such as the static address listed in \verb|/boot/System.map| will offset by some entropy.
@@ -2011,7 +2011,7 @@ Without \verb|KASLR|, the attacker may find the target address in the fixed addr
 Then the attacker can use return-oriented programming to insert some malicious codes to execute or receive the target data by a tampered pointer.
 \verb|KASLR| mitigates these kinds of attacks because the attacker cannot immediately know the target address, but a brute-force attack can still work.
 If the address of a symbol in \verb|/proc/kallsyms| is different from the address in \verb|/boot/System.map|, \verb|KASLR| is enabled with the kernel, which your system running on.
-\begin{verbatim}
+\begin{codebash}
 $ grep GRUB_CMDLINE_LINUX_DEFAULT /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 $ sudo grep sys_call_table /boot/System.map-$(uname -r)
@@ -2023,18 +2023,18 @@ $ sudo grep sys_call_table /boot/System.map-$(uname -r)
 ffffffff82000300 R sys_call_table
 $ sudo grep sys_call_table /proc/kallsyms
 ffffffff86400300 R sys_call_table
-\end{verbatim}
+\end{codebash}
 If \verb|KASLR| is enabled, we have to take care of the address from \verb|/proc/kallsyms| each time we reboot the machine.
 In order to use the address from \verb|/boot/System.map|, make sure that \verb|KASLR| is disabled.
 You can add the \verb|nokaslr| for disabling \verb|KASLR| in next booting time:
-\begin{verbatim}
+\begin{codebash}
 $ grep GRUB_CMDLINE_LINUX_DEFAULT /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 $ sudo perl -i -pe 'm/quiet/ and s//quiet nokaslr/' /etc/default/grub
 $ grep quiet /etc/default/grub
 GRUB_CMDLINE_LINUX_DEFAULT="quiet nokaslr splash"
 $ sudo update-grub
-\end{verbatim}
+\end{codebash}
 
 For more information, check out the following:
 
@@ -2129,7 +2129,7 @@ There is one more point to remember. Some times processes don't want to sleep, t
 Such processes use the \cpp|O_NONBLOCK| flag when opening the file.
 The kernel is supposed to respond by returning with the error code \cpp|-EAGAIN| from operations which would otherwise block, such as opening the file in this example. The program \sh|cat_nonblock|, available in the \verb|examples/other| directory, can be used to open a file with \cpp|O_NONBLOCK|.
 
-\begin{verbatim}
+\begin{codebash}
 $ sudo insmod sleep.ko
 $ cat_nonblock /proc/sleep
 Last input:
@@ -2150,7 +2150,7 @@ $ kill %1
 $ cat_nonblock /proc/sleep
 Last input:
 $
-\end{verbatim}
+\end{codebash}
 
 \samplec{examples/sleep.c}
 
@@ -2790,11 +2790,11 @@ sudo cat /dev/dht11
 \end{codebash}
 
 Expected Output:
-\begin{verbatim}
+\begin{codebash}
 $ sudo cat /dev/dht11
 Humidity: 61%
 Temperature: 30°C
-\end{verbatim}
+\end{codebash}
 
 Finally, remove the module:
 \begin{codebash}
@@ -2824,12 +2824,12 @@ depending on whether it is interrupted by \textbf{softirq}.
 
 So with this example loaded \sh|dmesg| should show:
 
-\begin{verbatim}
+\begin{codebash}
 tasklet example init
 Example tasklet starts
 Example tasklet init continues...
 Example tasklet ends
-\end{verbatim}
+\end{codebash}
 Although tasklet is easy to use, it comes with several drawbacks, and developers have been discussing their removal from the Linux kernel.
 The tasklet callback runs in atomic context, inside a software interrupt, meaning that it cannot sleep or access user-space data, so not all work can be done in a tasklet handler.
 Also, the kernel only allows one instance of any given tasklet to be running at any given time; multiple different tasklet callbacks can run in parallel.
