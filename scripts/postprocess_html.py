@@ -112,13 +112,21 @@ def normalize_lineno_gap(body: str) -> str:
     if max(gaps) <= 2:
         return LINENO_BEFORE_CODE.sub(r"\1 ", body)
 
+    min_gap = min(gaps)
+
+    # If every line has the SAME gap and it's > 1, this is block-level
+    # indent leak (the whole block was emitted with uniform extra
+    # whitespace because the source \begin{codebash} was nested inside an
+    # \item or similar indented LaTeX context). Strip it down to a
+    # single-space baseline.
+    if min_gap == max(gaps) and min_gap > 1:
+        return LINENO_BEFORE_CODE.sub(r"\1 ", body)
+
     # The minimum gap represents the block's "structural" indent (i.e.,
     # how much padding tex4ht emits when the source line is unindented).
     # Lines whose gap exceeds the minimum by 1-3 are first-line / nested-
     # block artifacts -- pull them back. Lines that exceed by 4+ are real
     # source indent (e.g. deep struct fields); leave those alone.
-    min_gap = min(gaps)
-
     def replace(m: re.Match) -> str:
         gap = len(m.group(2))
         excess = gap - min_gap
@@ -246,10 +254,186 @@ def inject_mobile_nav(html: str) -> str:
     return html
 
 
+TOC_BLOCK = re.compile(
+    r"(<div class='tableofcontents'>)(.*?)(\s*</div>\s*\n)",
+    re.DOTALL,
+)
+TOC_ENTRY = re.compile(
+    r"<span class='(chapterToc|sectionToc|subsectionToc)'>.*?</span>",
+    re.DOTALL,
+)
+
+
+def restructure_toc(html: str) -> str:
+    """Group each chapter's sections + subsections under a chapter-group div
+    so we can collapse them with CSS + scroll-spy JS (mdBook-style)."""
+    m = TOC_BLOCK.search(html)
+    if not m:
+        return html
+    opening, body, closing = m.group(1), m.group(2), m.group(3)
+    if "toc-chapter-group" in body:
+        return html  # already restructured
+
+    entries = []
+    for em in TOC_ENTRY.finditer(body):
+        entries.append((em.group(1), em.group(0)))
+
+    if not entries:
+        return html
+
+    groups = []
+    current = None
+    for cls, entry in entries:
+        if cls == "chapterToc":
+            if current is not None:
+                groups.append(current)
+            current = {"chapter": entry, "children": []}
+        else:
+            if current is None:
+                # Section before any chapter (TOC opens with a sectionToc).
+                # Wrap as a synthetic group with no chapter header.
+                current = {"chapter": "", "children": []}
+            current["children"].append(entry)
+    if current is not None:
+        groups.append(current)
+
+    new_body_parts = []
+    for g in groups:
+        chapter_html = g["chapter"]
+        if g["children"] and chapter_html:
+            # Inject expand chevron inside the chapterToc span (before its
+            # text). Chevron toggles the chapter group's manual-expand state
+            # without navigating.
+            chevron = (
+                '<button class="toc-expand" type="button" '
+                'aria-label="Expand chapter sections" aria-expanded="false">'
+                '<span class="toc-chevron"></span></button>'
+            )
+            chapter_html = re.sub(
+                r"(<span class='chapterToc'>)",
+                r"\1" + chevron,
+                chapter_html,
+                count=1,
+            )
+            children_html = "\n".join(g["children"])
+            new_body_parts.append(
+                f'<div class="toc-chapter-group">{chapter_html}'
+                f'<div class="toc-chapter-sections">{children_html}</div></div>'
+            )
+        elif chapter_html:
+            new_body_parts.append(
+                f'<div class="toc-chapter-group">{chapter_html}</div>'
+            )
+        else:
+            children_html = "\n".join(g["children"])
+            new_body_parts.append(
+                f'<div class="toc-chapter-group">{children_html}</div>'
+            )
+
+    new_body = "\n".join(new_body_parts)
+    return html.replace(m.group(0), opening + "\n" + new_body + closing, 1)
+
+
+SCROLL_SPY_SCRIPT = """
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var toc = document.querySelector('.tableofcontents');
+  if (!toc) return;
+  var links = toc.querySelectorAll('a[href^="#"]');
+  if (!links.length) return;
+  var linkByHash = Object.create(null);
+  links.forEach(function(a){
+    var h = a.getAttribute('href');
+    if (h && h.length > 1) linkByHash[h.slice(1)] = a;
+  });
+
+  // Chevron click: toggle user-expanded on its chapter-group, independent of
+  // scroll-spy. Stops propagation so the chapter link isn't followed.
+  toc.addEventListener('click', function(e){
+    var btn = e.target.closest('.toc-expand');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var group = btn.closest('.toc-chapter-group');
+    if (!group) return;
+    var nowOpen = !group.classList.contains('user-expanded');
+    group.classList.toggle('user-expanded', nowOpen);
+    btn.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+  });
+
+  var headings = Array.prototype.slice.call(
+    document.querySelectorAll('h2[id], h3[id], h4[id]')
+  ).filter(function(h){ return h.id !== 'contents'; });
+  if (!headings.length) return;
+
+  function setActiveByHash(id){
+    var link = linkByHash[id];
+    if (!link) return;
+    // Clear previous scroll-set highlight + scroll-expand. Leave user-expand
+    // (the chevron-toggle state) untouched.
+    toc.querySelectorAll('.toc-active').forEach(function(el){
+      el.classList.remove('toc-active');
+    });
+    toc.querySelectorAll('.toc-chapter-group.scroll-expanded').forEach(function(el){
+      el.classList.remove('scroll-expanded');
+    });
+    var span = link.closest('.chapterToc, .sectionToc, .subsectionToc');
+    if (span) span.classList.add('toc-active');
+    var group = link.closest('.toc-chapter-group');
+    if (group) group.classList.add('scroll-expanded');
+    // Scroll the active entry into view in the TOC sidebar (desktop only).
+    if (span && span.scrollIntoView && !document.body.classList.contains('toc-open')) {
+      var r = span.getBoundingClientRect();
+      var tocRect = toc.getBoundingClientRect();
+      if (r.top < tocRect.top || r.bottom > tocRect.bottom) {
+        span.scrollIntoView({block: 'center'});
+      }
+    }
+  }
+
+  var currentId = null;
+  function update(){
+    var offset = window.innerHeight * 0.30;
+    var nearest = null;
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      var top = h.getBoundingClientRect().top;
+      if (top < offset) nearest = h;
+      else break;
+    }
+    var id = nearest ? nearest.id : (headings[0] && headings[0].id);
+    if (id && id !== currentId) {
+      currentId = id;
+      setActiveByHash(id);
+    }
+  }
+
+  var raf = null;
+  window.addEventListener('scroll', function(){
+    if (raf) return;
+    raf = window.requestAnimationFrame(function(){
+      raf = null;
+      update();
+    });
+  }, { passive: true });
+  update();
+});
+</script>
+"""
+
+
+def inject_scroll_spy(html: str) -> str:
+    if "linkByHash" in html:
+        return html
+    return html.replace("</body>", SCROLL_SPY_SCRIPT + "</body>", 1)
+
+
 def process(html: str) -> str:
     html = fix_line_numbers(html)
     html = clean_fancyvrb_blocks(html)
+    html = restructure_toc(html)
     html = inject_mobile_nav(html)
+    html = inject_scroll_spy(html)
     return html
 
 
