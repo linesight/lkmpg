@@ -185,19 +185,28 @@ body > :not(.tableofcontents) { box-sizing: border-box; width: auto; max-width: 
 .tableofcontents { position: fixed; top: 1rem; left: 1rem; bottom: 1rem; z-index: 10; width: 19rem; max-width: none; margin: 0; overflow-y: auto; padding: 1.5rem 1.25rem 2rem; border-right: 1px solid #d6c6aa; background: linear-gradient(180deg, #efe4ca 0%, #eadcbf 100%); box-shadow: inset -1px 0 0 rgba(91, 70, 75, 0.08); }
 .tableofcontents::before { content: "Contents"; display: block; margin-bottom: 1rem; font-family: Manrope; font-size: 0.9rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #5B464B; }
 .chapterToc, .sectionToc, .subsectionToc { display: block; font-family: Manrope; }
-.chapterToc { margin-top: 1.1rem; padding-top: 0.9rem; border-top: 1px solid rgba(91, 70, 75, 0.14); font-size: 1rem; font-weight: 800; line-height: 1.45; }
-.chapterToc:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.chapterToc { margin-top: 0.55rem; padding-top: 0.5rem; padding-bottom: 0.25rem; border-top: 1px solid rgba(91, 70, 75, 0.14); font-size: 0.9rem; font-weight: 800; line-height: 1.3; }
+.toc-chapter-group:first-child .chapterToc { margin-top: 0; padding-top: 0; border-top: 0; }
 .chapterToc a { color: #5B464B; text-decoration: none; line-height: inherit; font-weight: inherit; }
-.sectionToc { margin-top: 0.35rem; margin-left: 0; font-size: 0.95rem; line-height: 1.45; }
+.sectionToc { margin-top: 0.1rem; margin-left: 0.6rem; font-size: 0.82rem; line-height: 1.3; }
 .sectionToc a { color: #7a5a4f; text-decoration: none; }
-.subsectionToc { margin-top: 0.18rem; margin-left: 0.9rem; font-size: 0.82rem; line-height: 1.35; }
+.subsectionToc { margin-top: 0.05rem; margin-left: 1.4rem; font-size: 0.75rem; line-height: 1.3; }
 .subsectionToc a { color: #6b4f54; text-decoration: none; }
+.toc-chapter-sections { overflow: hidden; max-height: 0; transition: max-height 0.25s ease-out; }
+.toc-chapter-group.scroll-expanded .toc-chapter-sections, .toc-chapter-group.user-expanded .toc-chapter-sections { max-height: 70rem; }
+.toc-expand { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; margin-right: 0.1rem; padding: 0; background: transparent; border: 0; color: inherit; cursor: pointer; vertical-align: middle; border-radius: 3px; -webkit-tap-highlight-color: transparent; }
+.toc-expand:hover { background: rgba(91, 70, 75, 0.08); }
+.toc-chevron { display: inline-block; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 5px solid currentColor; opacity: 0.6; transition: transform 0.2s ease; transform-origin: 25}
+.toc-chapter-group.scroll-expanded .toc-chevron, .toc-chapter-group.user-expanded .toc-chevron { transform: rotate(90deg); }
+.toc-active { border-left: 3px solid #C0613B; padding-left: 0.45rem; background: rgba(192, 97, 59, 0.07); border-radius: 0 3px 3px 0; }
+.toc-active a { color: #5B464B; font-weight: 600; }
 .tableofcontents a { overflow-wrap: anywhere; word-break: break-word; }
 .tableofcontents a:hover { color: #0060DF; text-decoration: underline; }
 .likechapterHead#contents { display: none; }
 a { color: #0060DF; }
 a:focus-visible { outline: 3px solid #0060DF; outline-offset: 2px; border-radius: 2px; }
-p, a { font-size: 1.2rem; font-family: Manrope; }
+p, a, li { font-size: 1.2rem; font-family: Manrope; }
+li.enumerate { margin-top: 1ex; margin-bottom: 1ex; }
 p + pre { font-size: 1.1em; }
 div.author { white-space: normal; }
 .maketitle { min-height: auto; padding: 0; margin-top: 3rem; margin-bottom: 1rem; }
@@ -219,7 +228,7 @@ figure, .fancyvrb, .verbatim { margin-inline: 0; }
 @media (max-width: 900px) { .maketitle + p { width: 100%; max-width: 24rem; margin: 1rem auto 0; } .maketitle .titleHead, .maketitle .author, .maketitle .date { max-width: none; text-align: center; margin-left: auto; margin-right: auto; } .maketitle + p img { max-height: none; margin: 0 auto; } }
 @media (max-width: 700px) { p, a { font-size: 1rem; } .maketitle .author span { font-size: 1.2rem; } pre.fancyvrb { font-size: 0.85rem; padding: 0.5em 0.7em; } }
 @media (max-width: 480px) { body { padding: 0 0.75rem 2rem; } .maketitle .author span { font-size: 1rem; } .ecrm-0500 { min-width: 1.4rem; padding-right: 0.4em; font-size: 0.85em; } }
-@media (pointer: coarse) { .tableofcontents a { padding: 0.25rem 0; line-height: 1.6; } .subsectionToc { font-size: 0.95rem; } }
+@media (pointer: coarse) { .tableofcontents a { padding: 0.25rem 0; line-height: 1.6; } .subsectionToc { font-size: 0.95rem; } .toc-expand { width: 2.2rem; height: 2.2rem; } .toc-chevron { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 8px; } }
 @media print { body { display: block; padding: 0; } .tableofcontents { position: static; width: auto; max-height: none; border-right: 0; box-shadow: none; background: none; page-break-after: always; } .page-actions { display: none; } .maketitle { min-height: auto; margin: 0; } .maketitle .titleHead, .maketitle .author, .maketitle .date { max-width: none; } .maketitle + p { float: none; width: auto; max-width: 20rem; margin: 1rem 0 0; } }
 pre#fancyvrb1{padding:5.69054pt;}
 pre#fancyvrb1{ border-top: solid 0.4pt; }

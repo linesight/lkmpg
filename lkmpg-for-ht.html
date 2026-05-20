@@ -25,7 +25,7 @@
 
 <h2 class='titleHead'>The Linux Kernel Module Programming Guide</h2>
 <div class='author'><span class='ecrm-1200'>Peter Jay Salzman, Michael Burian, Ori Pomerantz, Bob Mottram, Jim Huang</span></div><br />
-<div class='date'><span class='ecrm-1200'>May 19, 2026</span></div>
+<div class='date'><span class='ecrm-1200'>May 20, 2026</span></div>
                                                                   
 
                                                                   
@@ -34,128 +34,117 @@
 
                                                                   
    <div class='tableofcontents'>
-   <span class='chapterToc'>1 <a href='#getting-started' id='QQ2-1-2'>Getting Started</a></span>
-<br />    <span class='sectionToc'>1 <a href='#introduction' id='QQ2-1-3'>Introduction</a></span>
-<br />     <span class='subsectionToc'>1.1 <a href='#authorship' id='QQ2-1-4'>Authorship</a></span>
-<br />     <span class='subsectionToc'>1.2 <a href='#acknowledgements' id='QQ2-1-5'>Acknowledgements</a></span>
-<br />     <span class='subsectionToc'>1.3 <a href='#what-is-a-kernel-module' id='QQ2-1-6'>What Is A Kernel Module?</a></span>
-<br />     <span class='subsectionToc'>1.4 <a href='#kernel-module-package' id='QQ2-1-7'>Kernel module package</a></span>
-<br />     <span class='subsectionToc'>1.5 <a href='#what-modules-are-in-my-kernel' id='QQ2-1-8'>What Modules are in my Kernel?</a></span>
-<br />     <span class='subsectionToc'>1.6 <a href='#is-there-a-need-to-download-and-compile-the-kernel' id='QQ2-1-9'>Is there a need to download and compile the kernel?</a></span>
-<br />     <span class='subsectionToc'>1.7 <a href='#before-we-begin' id='QQ2-1-10'>Before We Begin</a></span>
-<br />     <span class='subsectionToc'>1.8 <a href='#qemubased-development-environment' id='QQ2-1-11'>QEMU-Based Development Environment</a></span>
-<br />    <span class='sectionToc'>2 <a href='#kernel-headers' id='QQ2-1-12'>Kernel Headers</a></span>
-<br />    <span class='sectionToc'>3 <a href='#examples' id='QQ2-1-13'>Examples</a></span>
-<br />    <span class='sectionToc'>4 <a href='#hello-world' id='QQ2-1-14'>Hello World</a></span>
-<br />     <span class='subsectionToc'>4.1 <a href='#the-simplest-module' id='QQ2-1-15'>The Simplest Module</a></span>
-<br />     <span class='subsectionToc'>4.2 <a href='#hello-and-goodbye' id='QQ2-1-16'>Hello and Goodbye</a></span>
-<br />     <span class='subsectionToc'>4.3 <a href='#the-init-and-exit-macros' id='QQ2-1-17'>The __init and __exit Macros</a></span>
-<br />     <span class='subsectionToc'>4.4 <a href='#licensing-and-module-documentation' id='QQ2-1-18'>Licensing and Module Documentation</a></span>
-<br />     <span class='subsectionToc'>4.5 <a href='#passing-command-line-arguments-to-a-module' id='QQ2-1-19'>Passing Command Line Arguments to a Module</a></span>
-<br />     <span class='subsectionToc'>4.6 <a href='#modules-spanning-multiple-files' id='QQ2-1-20'>Modules Spanning Multiple Files</a></span>
-<br />     <span class='subsectionToc'>4.7 <a href='#building-modules-for-a-precompiled-kernel' id='QQ2-1-21'>Building modules for a precompiled kernel</a></span>
-<br />   <span class='chapterToc'>2 <a href='#core-kernel-interfaces' id='QQ2-1-22'>Core Kernel Interfaces</a></span>
-<br />    <span class='sectionToc'>5 <a href='#preliminaries' id='QQ2-1-23'>Preliminaries</a></span>
-<br />     <span class='subsectionToc'>5.1 <a href='#how-modules-begin-and-end' id='QQ2-1-24'>How modules begin and end</a></span>
-<br />     <span class='subsectionToc'>5.2 <a href='#functions-available-to-modules' id='QQ2-1-27'>Functions available to modules</a></span>
-<br />     <span class='subsectionToc'>5.3 <a href='#user-space-vs-kernel-space' id='QQ2-1-28'>User Space vs Kernel Space</a></span>
-<br />     <span class='subsectionToc'>5.4 <a href='#name-space' id='QQ2-1-30'>Name Space</a></span>
-<br />     <span class='subsectionToc'>5.5 <a href='#code-space' id='QQ2-1-31'>Code space</a></span>
-<br />     <span class='subsectionToc'>5.6 <a href='#device-drivers' id='QQ2-1-32'>Device Drivers</a></span>
-<br />    <span class='sectionToc'>6 <a href='#character-device-drivers' id='QQ2-1-33'>Character Device drivers</a></span>
-<br />     <span class='subsectionToc'>6.1 <a href='#the-fileoperations-structure' id='QQ2-1-34'>The file_operations Structure</a></span>
-<br />     <span class='subsectionToc'>6.2 <a href='#the-file-structure' id='QQ2-1-35'>The file structure</a></span>
-<br />     <span class='subsectionToc'>6.3 <a href='#registering-a-device' id='QQ2-1-36'>Registering A Device</a></span>
-<br />     <span class='subsectionToc'>6.4 <a href='#unregistering-a-device' id='QQ2-1-37'>Unregistering A Device</a></span>
-<br />     <span class='subsectionToc'>6.5 <a href='#chardevc' id='QQ2-1-38'>chardev.c</a></span>
-<br />     <span class='subsectionToc'>6.6 <a href='#writing-modules-for-multiple-kernel-versions' id='QQ2-1-39'>Writing Modules for Multiple Kernel Versions</a></span>
-<br />    <span class='sectionToc'>7 <a href='#the-proc-filesystem' id='QQ2-1-40'>The /proc Filesystem</a></span>
-                                                                  
-
-                                                                  
-<br />     <span class='subsectionToc'>7.1 <a href='#the-procops-structure' id='QQ2-1-41'>The proc_ops Structure</a></span>
-<br />     <span class='subsectionToc'>7.2 <a href='#read-and-write-a-proc-file' id='QQ2-1-42'>Read and Write a /proc File</a></span>
-<br />     <span class='subsectionToc'>7.3 <a href='#manage-proc-file-metadata-and-access-hooks' id='QQ2-1-43'>Manage /proc file metadata and access hooks</a></span>
-<br />     <span class='subsectionToc'>7.4 <a href='#manage-proc-file-with-seqfile' id='QQ2-1-44'>Manage /proc file with seq_file</a></span>
-<br />    <span class='sectionToc'>8 <a href='#sysfs-interacting-with-your-module' id='QQ2-1-46'>sysfs: Interacting with your module</a></span>
-<br />    <span class='sectionToc'>9 <a href='#debugfs-flexible-debugging-interfaces' id='QQ2-1-47'>debugfs: Flexible debugging interfaces</a></span>
-<br />    <span class='sectionToc'>10 <a href='#talking-to-device-files' id='QQ2-1-48'>Talking To Device Files</a></span>
-<br />     <span class='subsectionToc'>10.1 <a href='#poll-select-and-epoll' id='QQ2-1-49'>poll, select, and epoll</a></span>
-<br />     <span class='subsectionToc'>10.2 <a href='#asynchronous-notification' id='QQ2-1-50'>Asynchronous notification</a></span>
-<br />   <span class='chapterToc'>3 <a href='#execution-context-and-control-flow' id='QQ2-1-51'>Execution Context and Control Flow</a></span>
-<br />    <span class='sectionToc'>11 <a href='#system-calls' id='QQ2-1-52'>System Calls</a></span>
-<br />    <span class='sectionToc'>12 <a href='#blocking-processes-and-threads' id='QQ2-1-53'>Blocking Processes and threads</a></span>
-<br />     <span class='subsectionToc'>12.1 <a href='#sleep' id='QQ2-1-54'>Sleep</a></span>
-<br />     <span class='subsectionToc'>12.2 <a href='#completions' id='QQ2-1-55'>Completions</a></span>
-<br />    <span class='sectionToc'>13 <a href='#synchronization' id='QQ2-1-56'>Synchronization</a></span>
-<br />     <span class='subsectionToc'>13.1 <a href='#mutex' id='QQ2-1-57'>Mutex</a></span>
-<br />     <span class='subsectionToc'>13.2 <a href='#spinlocks' id='QQ2-1-58'>Spinlocks</a></span>
-<br />     <span class='subsectionToc'>13.3 <a href='#read-and-write-locks' id='QQ2-1-59'>Read and write locks</a></span>
-<br />     <span class='subsectionToc'>13.4 <a href='#atomic-operations' id='QQ2-1-60'>Atomic operations</a></span>
-<br />    <span class='sectionToc'>14 <a href='#replacing-print-macros' id='QQ2-1-61'>Replacing Print Macros</a></span>
-<br />     <span class='subsectionToc'>14.1 <a href='#replacement' id='QQ2-1-62'>Replacement</a></span>
-<br />     <span class='subsectionToc'>14.2 <a href='#flashing-keyboard-leds' id='QQ2-1-63'>Flashing keyboard LEDs</a></span>
-<br />   <span class='chapterToc'>4 <a href='#memory-time-and-data-movement' id='QQ2-1-64'>Memory, Time, and Data Movement</a></span>
-<br />    <span class='sectionToc'>15 <a href='#timekeeping-and-deferred-execution' id='QQ2-1-65'>Timekeeping and Deferred Execution</a></span>
-<br />    <span class='sectionToc'>16 <a href='#memory-allocation-and-ownership' id='QQ2-1-66'>Memory Allocation and Ownership</a></span>
-<br />    <span class='sectionToc'>17 <a href='#copying-data-across-the-userkernel-boundary' id='QQ2-1-67'>Copying Data Across the User-Kernel Boundary</a></span>
-<br />    <span class='sectionToc'>18 <a href='#memorymapped-io-and-register-access' id='QQ2-1-68'>Memory-Mapped I/O and Register Access</a></span>
-<br />    <span class='sectionToc'>19 <a href='#dma-and-mmap' id='QQ2-1-69'>DMA and mmap</a></span>
-<br />     <span class='subsectionToc'>19.1 <a href='#dma-addressing-and-ownership-rules' id='QQ2-1-70'>DMA Addressing and Ownership Rules</a></span>
-<br />     <span class='subsectionToc'>19.2 <a href='#scattergather-and-dma-api-patterns' id='QQ2-1-71'>Scatter-Gather and DMA API Patterns</a></span>
-<br />     <span class='subsectionToc'>19.3 <a href='#dma-debugging-and-common-mistakes' id='QQ2-1-72'>DMA Debugging and Common Mistakes</a></span>
-<br />    <span class='sectionToc'>20 <a href='#modern-interface-choices-for-linux-and-later' id='QQ2-1-73'>Modern Interface Choices for Linux 5.10 and Later</a></span>
-<br />   <span class='chapterToc'>5 <a href='#hardware-integration-and-advanced-topics' id='QQ2-1-74'>Hardware Integration and Advanced Topics</a></span>
-<br />    <span class='sectionToc'>21 <a href='#gpio' id='QQ2-1-75'>GPIO</a></span>
-<br />     <span class='subsectionToc'>21.1 <a href='#gpio1' id='QQ2-1-76'>GPIO</a></span>
-<br />     <span class='subsectionToc'>21.2 <a href='#control-the-leds-onoff-state' id='QQ2-1-77'>Control the LED’s on/off state</a></span>
-<br />     <span class='subsectionToc'>21.3 <a href='#dht-sensor' id='QQ2-1-78'>DHT11 sensor</a></span>
-<br />    <span class='sectionToc'>22 <a href='#scheduling-tasks' id='QQ2-1-79'>Scheduling Tasks</a></span>
-<br />     <span class='subsectionToc'>22.1 <a href='#tasklets' id='QQ2-1-80'>Tasklets</a></span>
-<br />     <span class='subsectionToc'>22.2 <a href='#work-queues' id='QQ2-1-81'>Work queues</a></span>
-<br />    <span class='sectionToc'>23 <a href='#interrupt-handlers' id='QQ2-1-82'>Interrupt Handlers</a></span>
-<br />     <span class='subsectionToc'>23.1 <a href='#interrupt-handlers1' id='QQ2-1-83'>Interrupt Handlers</a></span>
-<br />     <span class='subsectionToc'>23.2 <a href='#detecting-button-presses' id='QQ2-1-84'>Detecting button presses</a></span>
-<br />     <span class='subsectionToc'>23.3 <a href='#bottom-half' id='QQ2-1-85'>Bottom Half</a></span>
-<br />     <span class='subsectionToc'>23.4 <a href='#threaded-irq' id='QQ2-1-86'>Threaded IRQ</a></span>
-<br />    <span class='sectionToc'>24 <a href='#virtual-input-device-driver' id='QQ2-1-87'>Virtual Input Device Driver</a></span>
-                                                                  
-
-                                                                  
-<br />    <span class='sectionToc'>25 <a href='#pci-drivers' id='QQ2-1-88'>PCI Drivers</a></span>
-<br />    <span class='sectionToc'>26 <a href='#usb-drivers' id='QQ2-1-89'>USB Drivers</a></span>
-<br />     <span class='subsectionToc'>26.1 <a href='#usb-device-model-basics' id='QQ2-1-90'>USB Device Model Basics</a></span>
-<br />     <span class='subsectionToc'>26.2 <a href='#endpoints-pipes-and-urbs' id='QQ2-1-91'>Endpoints, Pipes, and URBs</a></span>
-<br />     <span class='subsectionToc'>26.3 <a href='#usb-and-userspace-interfaces' id='QQ2-1-92'>USB and Userspace Interfaces</a></span>
-<br />     <span class='subsectionToc'>26.4 <a href='#hotplug-suspend-and-failure-modes' id='QQ2-1-93'>Hotplug, Suspend, and Failure Modes</a></span>
-<br />    <span class='sectionToc'>27 <a href='#block-drivers' id='QQ2-1-94'>Block Drivers</a></span>
-<br />     <span class='subsectionToc'>27.1 <a href='#the-modern-block-stack' id='QQ2-1-95'>The Modern Block Stack</a></span>
-<br />     <span class='subsectionToc'>27.2 <a href='#bios-requests-and-completion' id='QQ2-1-96'>BIOs, Requests, and Completion</a></span>
-<br />     <span class='subsectionToc'>27.3 <a href='#queue-limits-flushes-and-reality' id='QQ2-1-97'>Queue Limits, Flushes, and Reality</a></span>
-<br />    <span class='sectionToc'>28 <a href='#network-drivers' id='QQ2-1-98'>Network Drivers</a></span>
-<br />     <span class='subsectionToc'>28.1 <a href='#netdevice-and-netdevops' id='QQ2-1-99'>net_device and netdev_ops</a></span>
-<br />     <span class='subsectionToc'>28.2 <a href='#socket-buffers-and-receive-paths' id='QQ2-1-100'>Socket Buffers and Receive Paths</a></span>
-<br />     <span class='subsectionToc'>28.3 <a href='#napi-interrupt-moderation-and-throughput' id='QQ2-1-101'>NAPI, Interrupt Moderation, and Throughput</a></span>
-<br />     <span class='subsectionToc'>28.4 <a href='#offloads-link-state-and-userspace' id='QQ2-1-102'>Offloads, Link State, and Userspace</a></span>
-<br />    <span class='sectionToc'>29 <a href='#standardizing-the-interfaces-the-device-model' id='QQ2-1-103'>Standardizing the interfaces: The Device Model</a></span>
-<br />    <span class='sectionToc'>30 <a href='#device-tree' id='QQ2-1-104'>Device Tree</a></span>
-<br />     <span class='subsectionToc'>30.1 <a href='#introduction-to-device-tree' id='QQ2-1-105'>Introduction to Device Tree</a></span>
-<br />     <span class='subsectionToc'>30.2 <a href='#device-tree-and-kernel-modules' id='QQ2-1-106'>Device Tree and Kernel Modules</a></span>
-<br />     <span class='subsectionToc'>30.3 <a href='#example-device-tree-module' id='QQ2-1-107'>Example: Device Tree Module</a></span>
-<br />     <span class='subsectionToc'>30.4 <a href='#device-tree-source-example' id='QQ2-1-108'>Device Tree Source Example</a></span>
-<br />     <span class='subsectionToc'>30.5 <a href='#testing-device-tree-modules' id='QQ2-1-109'>Testing Device Tree Modules</a></span>
-<br />     <span class='subsectionToc'>30.6 <a href='#common-device-tree-functions' id='QQ2-1-110'>Common Device Tree Functions</a></span>
-<br />    <span class='sectionToc'>31 <a href='#optimizations' id='QQ2-1-111'>Optimizations</a></span>
-<br />     <span class='subsectionToc'>31.1 <a href='#likely-and-unlikely-conditions' id='QQ2-1-112'>Likely and Unlikely conditions</a></span>
-<br />     <span class='subsectionToc'>31.2 <a href='#static-keys' id='QQ2-1-113'>Static keys</a></span>
-<br />    <span class='sectionToc'>32 <a href='#common-pitfalls' id='QQ2-1-114'>Common Pitfalls</a></span>
-<br />     <span class='subsectionToc'>32.1 <a href='#using-standard-libraries' id='QQ2-1-115'>Using standard libraries</a></span>
-<br />     <span class='subsectionToc'>32.2 <a href='#disabling-interrupts' id='QQ2-1-116'>Disabling interrupts</a></span>
-<br />     <span class='subsectionToc'>32.3 <a href='#kernel-stack-is-small' id='QQ2-1-117'>Kernel stack is small</a></span>
-<br />     <span class='subsectionToc'>32.4 <a href='#no-floating-point-in-the-kernel' id='QQ2-1-118'>No floating point in the kernel</a></span>
-<br />     <span class='subsectionToc'>32.5 <a href='#initialize-buffers-before-copying-to-user-space' id='QQ2-1-119'>Initialize buffers before copying to user space</a></span>
-<br />     <span class='subsectionToc'>32.6 <a href='#doubleunderscore-functions-are-internal' id='QQ2-1-120'>Double-underscore functions are internal</a></span>
-<br />    <span class='sectionToc'>33 <a href='#where-to-go-from-here' id='QQ2-1-121'>Where To Go From Here?</a></span>
+<div class="toc-chapter-group"><span class='chapterToc'><button class="toc-expand" type="button" aria-label="Expand chapter sections" aria-expanded="false"><span class="toc-chevron"></span></button>1 <a href='#getting-started' id='QQ2-1-2'>Getting Started</a></span><div class="toc-chapter-sections"><span class='sectionToc'>1 <a href='#introduction' id='QQ2-1-3'>Introduction</a></span>
+<span class='subsectionToc'>1.1 <a href='#authorship' id='QQ2-1-4'>Authorship</a></span>
+<span class='subsectionToc'>1.2 <a href='#acknowledgements' id='QQ2-1-5'>Acknowledgements</a></span>
+<span class='subsectionToc'>1.3 <a href='#what-is-a-kernel-module' id='QQ2-1-6'>What Is A Kernel Module?</a></span>
+<span class='subsectionToc'>1.4 <a href='#kernel-module-package' id='QQ2-1-7'>Kernel module package</a></span>
+<span class='subsectionToc'>1.5 <a href='#what-modules-are-in-my-kernel' id='QQ2-1-8'>What Modules are in my Kernel?</a></span>
+<span class='subsectionToc'>1.6 <a href='#is-there-a-need-to-download-and-compile-the-kernel' id='QQ2-1-9'>Is there a need to download and compile the kernel?</a></span>
+<span class='subsectionToc'>1.7 <a href='#before-we-begin' id='QQ2-1-10'>Before We Begin</a></span>
+<span class='subsectionToc'>1.8 <a href='#qemubased-development-environment' id='QQ2-1-11'>QEMU-Based Development Environment</a></span>
+<span class='sectionToc'>2 <a href='#kernel-headers' id='QQ2-1-12'>Kernel Headers</a></span>
+<span class='sectionToc'>3 <a href='#examples' id='QQ2-1-13'>Examples</a></span>
+<span class='sectionToc'>4 <a href='#hello-world' id='QQ2-1-14'>Hello World</a></span>
+<span class='subsectionToc'>4.1 <a href='#the-simplest-module' id='QQ2-1-15'>The Simplest Module</a></span>
+<span class='subsectionToc'>4.2 <a href='#hello-and-goodbye' id='QQ2-1-16'>Hello and Goodbye</a></span>
+<span class='subsectionToc'>4.3 <a href='#the-init-and-exit-macros' id='QQ2-1-17'>The __init and __exit Macros</a></span>
+<span class='subsectionToc'>4.4 <a href='#licensing-and-module-documentation' id='QQ2-1-18'>Licensing and Module Documentation</a></span>
+<span class='subsectionToc'>4.5 <a href='#passing-command-line-arguments-to-a-module' id='QQ2-1-19'>Passing Command Line Arguments to a Module</a></span>
+<span class='subsectionToc'>4.6 <a href='#modules-spanning-multiple-files' id='QQ2-1-20'>Modules Spanning Multiple Files</a></span>
+<span class='subsectionToc'>4.7 <a href='#building-modules-for-a-precompiled-kernel' id='QQ2-1-21'>Building modules for a precompiled kernel</a></span></div></div>
+<div class="toc-chapter-group"><span class='chapterToc'><button class="toc-expand" type="button" aria-label="Expand chapter sections" aria-expanded="false"><span class="toc-chevron"></span></button>2 <a href='#core-kernel-interfaces' id='QQ2-1-22'>Core Kernel Interfaces</a></span><div class="toc-chapter-sections"><span class='sectionToc'>5 <a href='#preliminaries' id='QQ2-1-23'>Preliminaries</a></span>
+<span class='subsectionToc'>5.1 <a href='#how-modules-begin-and-end' id='QQ2-1-24'>How modules begin and end</a></span>
+<span class='subsectionToc'>5.2 <a href='#functions-available-to-modules' id='QQ2-1-27'>Functions available to modules</a></span>
+<span class='subsectionToc'>5.3 <a href='#user-space-vs-kernel-space' id='QQ2-1-28'>User Space vs Kernel Space</a></span>
+<span class='subsectionToc'>5.4 <a href='#name-space' id='QQ2-1-30'>Name Space</a></span>
+<span class='subsectionToc'>5.5 <a href='#code-space' id='QQ2-1-31'>Code space</a></span>
+<span class='subsectionToc'>5.6 <a href='#device-drivers' id='QQ2-1-32'>Device Drivers</a></span>
+<span class='sectionToc'>6 <a href='#character-device-drivers' id='QQ2-1-33'>Character Device drivers</a></span>
+<span class='subsectionToc'>6.1 <a href='#the-fileoperations-structure' id='QQ2-1-34'>The file_operations Structure</a></span>
+<span class='subsectionToc'>6.2 <a href='#the-file-structure' id='QQ2-1-35'>The file structure</a></span>
+<span class='subsectionToc'>6.3 <a href='#registering-a-device' id='QQ2-1-36'>Registering A Device</a></span>
+<span class='subsectionToc'>6.4 <a href='#unregistering-a-device' id='QQ2-1-37'>Unregistering A Device</a></span>
+<span class='subsectionToc'>6.5 <a href='#chardevc' id='QQ2-1-38'>chardev.c</a></span>
+<span class='subsectionToc'>6.6 <a href='#writing-modules-for-multiple-kernel-versions' id='QQ2-1-39'>Writing Modules for Multiple Kernel Versions</a></span>
+<span class='sectionToc'>7 <a href='#the-proc-filesystem' id='QQ2-1-40'>The /proc Filesystem</a></span>
+<span class='subsectionToc'>7.1 <a href='#the-procops-structure' id='QQ2-1-41'>The proc_ops Structure</a></span>
+<span class='subsectionToc'>7.2 <a href='#read-and-write-a-proc-file' id='QQ2-1-42'>Read and Write a /proc File</a></span>
+<span class='subsectionToc'>7.3 <a href='#manage-proc-file-metadata-and-access-hooks' id='QQ2-1-43'>Manage /proc file metadata and access hooks</a></span>
+<span class='subsectionToc'>7.4 <a href='#manage-proc-file-with-seqfile' id='QQ2-1-44'>Manage /proc file with seq_file</a></span>
+<span class='sectionToc'>8 <a href='#sysfs-interacting-with-your-module' id='QQ2-1-46'>sysfs: Interacting with your module</a></span>
+<span class='sectionToc'>9 <a href='#debugfs-flexible-debugging-interfaces' id='QQ2-1-47'>debugfs: Flexible debugging interfaces</a></span>
+<span class='sectionToc'>10 <a href='#talking-to-device-files' id='QQ2-1-48'>Talking To Device Files</a></span>
+<span class='subsectionToc'>10.1 <a href='#poll-select-and-epoll' id='QQ2-1-49'>poll, select, and epoll</a></span>
+<span class='subsectionToc'>10.2 <a href='#asynchronous-notification' id='QQ2-1-50'>Asynchronous notification</a></span></div></div>
+<div class="toc-chapter-group"><span class='chapterToc'><button class="toc-expand" type="button" aria-label="Expand chapter sections" aria-expanded="false"><span class="toc-chevron"></span></button>3 <a href='#execution-context-and-control-flow' id='QQ2-1-51'>Execution Context and Control Flow</a></span><div class="toc-chapter-sections"><span class='sectionToc'>11 <a href='#system-calls' id='QQ2-1-52'>System Calls</a></span>
+<span class='sectionToc'>12 <a href='#blocking-processes-and-threads' id='QQ2-1-53'>Blocking Processes and threads</a></span>
+<span class='subsectionToc'>12.1 <a href='#sleep' id='QQ2-1-54'>Sleep</a></span>
+<span class='subsectionToc'>12.2 <a href='#completions' id='QQ2-1-55'>Completions</a></span>
+<span class='sectionToc'>13 <a href='#synchronization' id='QQ2-1-56'>Synchronization</a></span>
+<span class='subsectionToc'>13.1 <a href='#mutex' id='QQ2-1-57'>Mutex</a></span>
+<span class='subsectionToc'>13.2 <a href='#spinlocks' id='QQ2-1-58'>Spinlocks</a></span>
+<span class='subsectionToc'>13.3 <a href='#read-and-write-locks' id='QQ2-1-59'>Read and write locks</a></span>
+<span class='subsectionToc'>13.4 <a href='#atomic-operations' id='QQ2-1-60'>Atomic operations</a></span>
+<span class='sectionToc'>14 <a href='#replacing-print-macros' id='QQ2-1-61'>Replacing Print Macros</a></span>
+<span class='subsectionToc'>14.1 <a href='#replacement' id='QQ2-1-62'>Replacement</a></span>
+<span class='subsectionToc'>14.2 <a href='#flashing-keyboard-leds' id='QQ2-1-63'>Flashing keyboard LEDs</a></span></div></div>
+<div class="toc-chapter-group"><span class='chapterToc'><button class="toc-expand" type="button" aria-label="Expand chapter sections" aria-expanded="false"><span class="toc-chevron"></span></button>4 <a href='#memory-time-and-data-movement' id='QQ2-1-64'>Memory, Time, and Data Movement</a></span><div class="toc-chapter-sections"><span class='sectionToc'>15 <a href='#timekeeping-and-deferred-execution' id='QQ2-1-65'>Timekeeping and Deferred Execution</a></span>
+<span class='sectionToc'>16 <a href='#memory-allocation-and-ownership' id='QQ2-1-66'>Memory Allocation and Ownership</a></span>
+<span class='sectionToc'>17 <a href='#copying-data-across-the-userkernel-boundary' id='QQ2-1-67'>Copying Data Across the User-Kernel Boundary</a></span>
+<span class='sectionToc'>18 <a href='#memorymapped-io-and-register-access' id='QQ2-1-68'>Memory-Mapped I/O and Register Access</a></span>
+<span class='sectionToc'>19 <a href='#dma-and-mmap' id='QQ2-1-69'>DMA and mmap</a></span>
+<span class='subsectionToc'>19.1 <a href='#dma-addressing-and-ownership-rules' id='QQ2-1-70'>DMA Addressing and Ownership Rules</a></span>
+<span class='subsectionToc'>19.2 <a href='#scattergather-and-dma-api-patterns' id='QQ2-1-71'>Scatter-Gather and DMA API Patterns</a></span>
+<span class='subsectionToc'>19.3 <a href='#dma-debugging-and-common-mistakes' id='QQ2-1-72'>DMA Debugging and Common Mistakes</a></span>
+<span class='sectionToc'>20 <a href='#modern-interface-choices-for-linux-and-later' id='QQ2-1-73'>Modern Interface Choices for Linux 5.10 and Later</a></span></div></div>
+<div class="toc-chapter-group"><span class='chapterToc'><button class="toc-expand" type="button" aria-label="Expand chapter sections" aria-expanded="false"><span class="toc-chevron"></span></button>5 <a href='#hardware-integration-and-advanced-topics' id='QQ2-1-74'>Hardware Integration and Advanced Topics</a></span><div class="toc-chapter-sections"><span class='sectionToc'>21 <a href='#gpio' id='QQ2-1-75'>GPIO</a></span>
+<span class='subsectionToc'>21.1 <a href='#gpio1' id='QQ2-1-76'>GPIO</a></span>
+<span class='subsectionToc'>21.2 <a href='#control-the-leds-onoff-state' id='QQ2-1-77'>Control the LED’s on/off state</a></span>
+<span class='subsectionToc'>21.3 <a href='#dht-sensor' id='QQ2-1-78'>DHT11 sensor</a></span>
+<span class='sectionToc'>22 <a href='#scheduling-tasks' id='QQ2-1-79'>Scheduling Tasks</a></span>
+<span class='subsectionToc'>22.1 <a href='#tasklets' id='QQ2-1-80'>Tasklets</a></span>
+<span class='subsectionToc'>22.2 <a href='#work-queues' id='QQ2-1-81'>Work queues</a></span>
+<span class='sectionToc'>23 <a href='#interrupt-handlers' id='QQ2-1-82'>Interrupt Handlers</a></span>
+<span class='subsectionToc'>23.1 <a href='#interrupt-handlers1' id='QQ2-1-83'>Interrupt Handlers</a></span>
+<span class='subsectionToc'>23.2 <a href='#detecting-button-presses' id='QQ2-1-84'>Detecting button presses</a></span>
+<span class='subsectionToc'>23.3 <a href='#bottom-half' id='QQ2-1-85'>Bottom Half</a></span>
+<span class='subsectionToc'>23.4 <a href='#threaded-irq' id='QQ2-1-86'>Threaded IRQ</a></span>
+<span class='sectionToc'>24 <a href='#virtual-input-device-driver' id='QQ2-1-87'>Virtual Input Device Driver</a></span>
+<span class='sectionToc'>25 <a href='#pci-drivers' id='QQ2-1-88'>PCI Drivers</a></span>
+<span class='sectionToc'>26 <a href='#usb-drivers' id='QQ2-1-89'>USB Drivers</a></span>
+<span class='subsectionToc'>26.1 <a href='#usb-device-model-basics' id='QQ2-1-90'>USB Device Model Basics</a></span>
+<span class='subsectionToc'>26.2 <a href='#endpoints-pipes-and-urbs' id='QQ2-1-91'>Endpoints, Pipes, and URBs</a></span>
+<span class='subsectionToc'>26.3 <a href='#usb-and-userspace-interfaces' id='QQ2-1-92'>USB and Userspace Interfaces</a></span>
+<span class='subsectionToc'>26.4 <a href='#hotplug-suspend-and-failure-modes' id='QQ2-1-93'>Hotplug, Suspend, and Failure Modes</a></span>
+<span class='sectionToc'>27 <a href='#block-drivers' id='QQ2-1-94'>Block Drivers</a></span>
+<span class='subsectionToc'>27.1 <a href='#the-modern-block-stack' id='QQ2-1-95'>The Modern Block Stack</a></span>
+<span class='subsectionToc'>27.2 <a href='#bios-requests-and-completion' id='QQ2-1-96'>BIOs, Requests, and Completion</a></span>
+<span class='subsectionToc'>27.3 <a href='#queue-limits-flushes-and-reality' id='QQ2-1-97'>Queue Limits, Flushes, and Reality</a></span>
+<span class='sectionToc'>28 <a href='#network-drivers' id='QQ2-1-98'>Network Drivers</a></span>
+<span class='subsectionToc'>28.1 <a href='#netdevice-and-netdevops' id='QQ2-1-99'>net_device and netdev_ops</a></span>
+<span class='subsectionToc'>28.2 <a href='#socket-buffers-and-receive-paths' id='QQ2-1-100'>Socket Buffers and Receive Paths</a></span>
+<span class='subsectionToc'>28.3 <a href='#napi-interrupt-moderation-and-throughput' id='QQ2-1-101'>NAPI, Interrupt Moderation, and Throughput</a></span>
+<span class='subsectionToc'>28.4 <a href='#offloads-link-state-and-userspace' id='QQ2-1-102'>Offloads, Link State, and Userspace</a></span>
+<span class='sectionToc'>29 <a href='#standardizing-the-interfaces-the-device-model' id='QQ2-1-103'>Standardizing the interfaces: The Device Model</a></span>
+<span class='sectionToc'>30 <a href='#device-tree' id='QQ2-1-104'>Device Tree</a></span>
+<span class='subsectionToc'>30.1 <a href='#introduction-to-device-tree' id='QQ2-1-105'>Introduction to Device Tree</a></span>
+<span class='subsectionToc'>30.2 <a href='#device-tree-and-kernel-modules' id='QQ2-1-106'>Device Tree and Kernel Modules</a></span>
+<span class='subsectionToc'>30.3 <a href='#example-device-tree-module' id='QQ2-1-107'>Example: Device Tree Module</a></span>
+<span class='subsectionToc'>30.4 <a href='#device-tree-source-example' id='QQ2-1-108'>Device Tree Source Example</a></span>
+<span class='subsectionToc'>30.5 <a href='#testing-device-tree-modules' id='QQ2-1-109'>Testing Device Tree Modules</a></span>
+<span class='subsectionToc'>30.6 <a href='#common-device-tree-functions' id='QQ2-1-110'>Common Device Tree Functions</a></span>
+<span class='sectionToc'>31 <a href='#optimizations' id='QQ2-1-111'>Optimizations</a></span>
+<span class='subsectionToc'>31.1 <a href='#likely-and-unlikely-conditions' id='QQ2-1-112'>Likely and Unlikely conditions</a></span>
+<span class='subsectionToc'>31.2 <a href='#static-keys' id='QQ2-1-113'>Static keys</a></span>
+<span class='sectionToc'>32 <a href='#common-pitfalls' id='QQ2-1-114'>Common Pitfalls</a></span>
+<span class='subsectionToc'>32.1 <a href='#using-standard-libraries' id='QQ2-1-115'>Using standard libraries</a></span>
+<span class='subsectionToc'>32.2 <a href='#disabling-interrupts' id='QQ2-1-116'>Disabling interrupts</a></span>
+<span class='subsectionToc'>32.3 <a href='#kernel-stack-is-small' id='QQ2-1-117'>Kernel stack is small</a></span>
+<span class='subsectionToc'>32.4 <a href='#no-floating-point-in-the-kernel' id='QQ2-1-118'>No floating point in the kernel</a></span>
+<span class='subsectionToc'>32.5 <a href='#initialize-buffers-before-copying-to-user-space' id='QQ2-1-119'>Initialize buffers before copying to user space</a></span>
+<span class='subsectionToc'>32.6 <a href='#doubleunderscore-functions-are-internal' id='QQ2-1-120'>Double-underscore functions are internal</a></span>
+<span class='sectionToc'>33 <a href='#where-to-go-from-here' id='QQ2-1-121'>Where To Go From Here?</a></span></div></div>
    </div>
    <h2 class='likechapterHead' id='contents'><a id='x1-1000'></a>Contents</h2>
    <div class='tableofcontents'>
@@ -753,7 +742,7 @@ the Makefile.
      in <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/etc/sudoers</span></span></span>.
      </p><!-- l. 496 --><p class='noindent'>
 </p>
-     <pre class='fancyvrb' id='fancyvrb31'><span class='ecrm-0500'>1</span>     <span class='ectt-0800'>Defaults env_keep += "PWD"</span></pre>
+     <pre class='fancyvrb' id='fancyvrb31'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>Defaults env_keep += "PWD"</span></pre>
      <!-- l. 500 --><p class='noindent'>After applying the above change, you can check the environment variable
      settings by:
      </p><!-- l. 502 --><p class='noindent'>
@@ -858,7 +847,7 @@ log level, which you’ll learn about in <a href='#x1-150822'>Item 2</a>.
      runtime without recompiling or reloading the module by writing to
      <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>/sys/kernel/debug/dynamic_debug/control</span></span></span>: 
 </p>
-     <pre class='fancyvrb' id='fancyvrb41'><span class='ecrm-0500'>1</span>     <span class='ectt-0800'>echo "module mymodule +p" &gt; /sys/kernel/debug/dynamic_debug/control</span></pre>
+     <pre class='fancyvrb' id='fancyvrb41'><span class='ecrm-0500'>1</span> <span class='ectt-0800'>echo "module mymodule +p" &gt; /sys/kernel/debug/dynamic_debug/control</span></pre>
      <!-- l. 609 --><p class='noindent'>The <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>+p</span></span></span> flag activates printing; <span class='obeylines-h'><span class='verb'><span class='ectt-1000'>-p</span></span></span> disables it. You can filter by file, function, or
      line number. See <a href='https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/admin-guide/dynamic-debug-howto.rst'>Documentation/admin-guide/dynamic-debug-howto.rst</a> for the
      full syntax.
@@ -9902,6 +9891,91 @@ document.addEventListener('DOMContentLoaded', function(){
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') setOpen(false);
   });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var toc = document.querySelector('.tableofcontents');
+  if (!toc) return;
+  var links = toc.querySelectorAll('a[href^="#"]');
+  if (!links.length) return;
+  var linkByHash = Object.create(null);
+  links.forEach(function(a){
+    var h = a.getAttribute('href');
+    if (h && h.length > 1) linkByHash[h.slice(1)] = a;
+  });
+
+  // Chevron click: toggle user-expanded on its chapter-group, independent of
+  // scroll-spy. Stops propagation so the chapter link isn't followed.
+  toc.addEventListener('click', function(e){
+    var btn = e.target.closest('.toc-expand');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var group = btn.closest('.toc-chapter-group');
+    if (!group) return;
+    var nowOpen = !group.classList.contains('user-expanded');
+    group.classList.toggle('user-expanded', nowOpen);
+    btn.setAttribute('aria-expanded', nowOpen ? 'true' : 'false');
+  });
+
+  var headings = Array.prototype.slice.call(
+    document.querySelectorAll('h2[id], h3[id], h4[id]')
+  ).filter(function(h){ return h.id !== 'contents'; });
+  if (!headings.length) return;
+
+  function setActiveByHash(id){
+    var link = linkByHash[id];
+    if (!link) return;
+    // Clear previous scroll-set highlight + scroll-expand. Leave user-expand
+    // (the chevron-toggle state) untouched.
+    toc.querySelectorAll('.toc-active').forEach(function(el){
+      el.classList.remove('toc-active');
+    });
+    toc.querySelectorAll('.toc-chapter-group.scroll-expanded').forEach(function(el){
+      el.classList.remove('scroll-expanded');
+    });
+    var span = link.closest('.chapterToc, .sectionToc, .subsectionToc');
+    if (span) span.classList.add('toc-active');
+    var group = link.closest('.toc-chapter-group');
+    if (group) group.classList.add('scroll-expanded');
+    // Scroll the active entry into view in the TOC sidebar (desktop only).
+    if (span && span.scrollIntoView && !document.body.classList.contains('toc-open')) {
+      var r = span.getBoundingClientRect();
+      var tocRect = toc.getBoundingClientRect();
+      if (r.top < tocRect.top || r.bottom > tocRect.bottom) {
+        span.scrollIntoView({block: 'center'});
+      }
+    }
+  }
+
+  var currentId = null;
+  function update(){
+    var offset = window.innerHeight * 0.30;
+    var nearest = null;
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      var top = h.getBoundingClientRect().top;
+      if (top < offset) nearest = h;
+      else break;
+    }
+    var id = nearest ? nearest.id : (headings[0] && headings[0].id);
+    if (id && id !== currentId) {
+      currentId = id;
+      setActiveByHash(id);
+    }
+  }
+
+  var raf = null;
+  window.addEventListener('scroll', function(){
+    if (raf) return;
+    raf = window.requestAnimationFrame(function(){
+      raf = null;
+      update();
+    });
+  }, { passive: true });
+  update();
 });
 </script>
 </body> 
